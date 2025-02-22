@@ -8,5 +8,5 @@ http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/m
 	<http:listener-config name="student-registration-api-http-listener" doc:name="HTTP Listener config" doc:id="d0a6baa2-8843-432b-8c86-52cb55fb27d6" >
 		<http:listener-connection host="0.0.0.0" port="8082" />
 	</http:listener-config>
-	<apikit:config outboundHeadersMapName="outboundHeadersMapName" httpStatusVarName="httpStatus" doc:name="Router" doc:id="825268c0-8cde-4312-8bd8-5ac9c4af93de" name="student-registration-api-router" api="api\student-api.raml" />
+	<apikit:config outboundHeadersMapName="outboundHeadersMapName" httpStatusVarName="httpStatus" doc:name="Router" doc:id="825268c0-8cde-4312-8bd8-5ac9c4af93de" name="student-registration-api-router" api="student-api.raml" />
 </mule>
