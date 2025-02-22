@@ -1,0 +1,99 @@
+#%RAML 1.0
+
+title: Student API
+description: API for managing student details in AWS S3
+version: v1
+baseUri: http://localhost:8081/api
+
+traits:
+  client-id-required:
+    headers:
+      client_id:
+        description: Client ID for authentication
+        type: string
+        required: true
+      client_secret:
+        description: Client Secret for authentication
+        type: string
+        required: true
+
+/students:
+  post:
+    description: Upload student details to AWS S3
+    is: [ client-id-required ]
+    body:
+      application/json:
+        type: object
+        example: |
+          {
+            "username": "Nani",
+            "Password": "xyz1234",
+            "Gender": "male",
+            "date_of_birth": "02/21/2025",
+            "email": "nani@gmail.com",
+            "contact_number": "9093457376",
+            "address": "4-5, vv street, tcodreu,hyderabad,678546,ts",
+            "highest_Qualification": "Btech",
+            "university_name": "Jntu kakinada",
+            "year_of_passing": "2018",
+            "work_experience_years": "5 years , 8 months",
+            "domain": "finance",
+            "technology": "mulesoft",
+            "programming_languages": "java",
+            "Certifications": "MCD level 1",
+            "Upload_Resume": "file"
+          }
+    responses:
+      201:
+        body:
+          application/json:
+            example: { "message": "Student data uploaded successfully" }
+
+  get:
+    description: Retrieve all student details
+    is: [ client-id-required ]
+    responses:
+      200:
+        body:
+          application/json:
+            example: [ { "username": "Nani", "email": "nani@gmail.com" } ]
+
+/students/{id}:
+  get:
+    description: Fetch student details from AWS S3
+    is: [ client-id-required ]
+    responses:
+      200:
+        body:
+          application/json:
+            example: { "username": "Nani", "email": "nani@gmail.com", "contact_number": "9093457376" }
+      404:
+        body:
+          application/json:
+            example: { "error": "Student not found" }
+  
+  put:
+    description: Update student details in AWS S3
+    is: [ client-id-required ]
+    body:
+      application/json:
+        type: object
+        example: { "username": "Nani", "email": "nani.updated@gmail.com" }
+    responses:
+      200:
+        body:
+          application/json:
+            example: { "message": "Student data updated successfully" }
+
+  delete:
+    description: Delete student details from AWS S3
+    is: [ client-id-required ]
+    responses:
+      200:
+        body:
+          application/json:
+            example: { "message": "Student data deleted successfully" }
+      404:
+        body:
+          application/json:
+            example: { "error": "Student not found" }
