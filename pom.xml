@@ -40,13 +40,9 @@
 						<provider>MC</provider>
 						<environment>Sandbox</environment>
 						<target>Cloudhub-US-East-2</target>
-
-						<!-- Match this with a valid runtime -->
 						<muleVersion>4.8.5</muleVersion>
-
-						<!-- server>anypoint-cred</server -->
-						<username>nani2025</username>
-						<password>Mule3456</password>
+						<username>${user}</username>
+						<password>${pass}</password>
 						<applicationName>student-registration-api</applicationName>
 						<replicas>1</replicas>
 						<vCores>0.1</vCores>
