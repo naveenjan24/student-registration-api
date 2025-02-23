@@ -1,20 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.mycompany</groupId>
+	<groupId>2ef77f20-9dde-4fe0-96c6-d6dff31906f6</groupId>
 	<artifactId>student-registration-api</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>mule-application</packaging>
 
-	<name>student-registration-api-</name>
+	<name>student-registration-api</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<app.runtime>4.7.0</app.runtime>
-		<mule.maven.plugin.version>4.2.0</mule.maven.plugin.version>
+		<!-- Use a supported runtime version -->
+		<app.runtime>4.8.5</app.runtime>
+
+		<!-- Use the latest stable Mule Maven Plugin version -->
+		<mule.maven.plugin.version>4.3.1</mule.maven.plugin.version>
 	</properties>
 
 	<build>
@@ -30,11 +35,36 @@
 				<version>${mule.maven.plugin.version}</version>
 				<extensions>true</extensions>
 				<configuration>
-					<classifier>mule-application</classifier>
+					<cloudhub2Deployment>
+						<uri>https://anypoint.mulesoft.com</uri>
+						<provider>MC</provider>
+						<environment>Sandbox</environment>
+						<target>Cloudhub-US-East-2</target>
+
+						<!-- Match this with a valid runtime -->
+						<muleVersion>4.8.5</muleVersion>
+
+						<server>anypoint-cred</server>
+						<applicationName>student-registration-api</applicationName>
+						<replicas>1</replicas>
+						<vCores>0.1</vCores>
+						<properties>
+							<http.port>8081</http.port>
+						</properties>
+					</cloudhub2Deployment>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
+
+	<distributionManagement>
+		<repository>
+			<id>anypoint-cred</id>
+			<name>Corporate Repository</name>
+			<url>https://maven.anypoint.mulesoft.com/api/v3/organizations/${project.groupId}/maven</url>
+			<layout>default</layout>
+		</repository>
+	</distributionManagement>
 
 	<dependencies>
 		<dependency>
