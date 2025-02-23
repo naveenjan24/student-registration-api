@@ -1,2 +1,9 @@
 "http":
   "port" : "8082"
+  
+"ch2":
+  "environment" : "Sandbox"
+  "target"  : "Cloudhub-US-East-2"
+  "muleVersion" : "4.8.5"
+  "envSuffix" : "sd"
+  

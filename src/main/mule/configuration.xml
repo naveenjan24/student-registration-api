@@ -9,5 +9,5 @@ http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/m
 		<http:listener-connection host="0.0.0.0" port="${http.port}" />
 	</http:listener-config>
 	<apikit:config outboundHeadersMapName="outboundHeadersMapName" httpStatusVarName="httpStatus" doc:name="Router" doc:id="825268c0-8cde-4312-8bd8-5ac9c4af93de" name="student-registration-api-router" api="student-api.raml" />
-	<configuration-properties doc:name="Configuration properties" doc:id="28f034a3-0d3d-4967-a4fe-7e2bfd5d9784" file="dev.yaml" />
+	<configuration-properties doc:name="Configuration properties" doc:id="28f034a3-0d3d-4967-a4fe-7e2bfd5d9784" file="${env}.yaml" />
 </mule>
