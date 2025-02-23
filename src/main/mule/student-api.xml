@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd ">
+    <apikit:config name="student-api-config" api="student-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <flow name="student-api-main">
+        <http:listener config-ref="student-registration-api-http-listener" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="student-api-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:BAD_REQUEST">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Bad request"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">400</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Method not allowed"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">405</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not acceptable"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">406</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Unsupported media type"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">415</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not Implemented"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">501</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="student-api-console">
+        <http:listener config-ref="student-registration-api-http-listener" path="/console/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="student-api-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="put:\students\(id):application\json:student-api-config" doc:id="6404e9a0-4713-40fb-8fad-c11187e3b881">
+        <logger level="INFO" doc:name="Start log" doc:id="5371d9ce-e7eb-445d-b891-e333e67301a4" message="started flow for update registration form"/>
+		<flow-ref doc:name="Update Flow Reference" doc:id="e9b88107-c58a-44e3-b435-dfe5cc3a2b71" name="update-registration-formFlow"/>
+		<logger level="INFO" doc:name="End Log" doc:id="86c17dd0-895b-4a33-8a5b-8c893deaf11f" message="Ended flow for update registration form"/>
+    </flow>
+    <flow name="delete:\students\(id):student-api-config">
+		<logger level="INFO" doc:name="Start log" doc:id="f8250edf-10c4-4a31-9135-08f406ec5fca" message="started flow for delete registration form" />
+		<flow-ref doc:name="Delete Flow Reference" doc:id="62c7a126-60e1-4d1e-ba09-5936ec7ace9d" name="delete-registration-formFlow" />
+		<logger level="INFO" doc:name="End Log" doc:id="bd7ffd6e-369d-4b42-ba00-13d883791553" message="Ended flow for delete registration form" />
+    </flow>
+    <flow name="get:\students:student-api-config" doc:id="4b1aca78-ff96-4ec6-adbc-d58ecf55670a">
+		<logger level="INFO" doc:name="Start log" doc:id="94f21ff4-8c70-4f23-94ca-895aea210d1d" message="started flow for fetch registration form" />
+		<flow-ref doc:name="Fetch Flow Reference" doc:id="7e966f7b-a9d5-4447-8347-b02ad0a4932d" name="fetch-registration-formFlow" />
+		<logger level="INFO" doc:name="End Log" doc:id="239edcf7-e29f-4f56-9f8a-b39bd62fcb58" message="Ended flow for fetch registration form" />
+    </flow>
+    <flow name="get:\students\(id):student-api-config">
+		<logger level="INFO" doc:name="Start log" doc:id="54683f69-7eb8-4605-afc7-ffc1f6b93ae8" message="started flow for fetch registration form by id" />
+		<flow-ref doc:name="Fetch by ID Flow Reference" doc:id="c27869b6-4b18-44d9-a5b3-a5adbb34979f" name="fetch-registration-form-by-idFlow" />
+		<logger level="INFO" doc:name="End Log" doc:id="ebcf6542-088c-4ab4-abdf-7c61c947f7eb" message="Ended flow for fetch registration form by id" />
+    </flow>
+    <flow name="post:\students:application\json:student-api-config">
+		<logger level="INFO" doc:name="Start log" doc:id="339896e7-a380-40c7-9925-c2a9870952c9" message="started flow for create registration form" />
+		<flow-ref doc:name="Create Flow Reference" doc:id="8a2ad7e4-6795-42a2-a0e5-08483a4e2de0" name="create-registration-formFlow" />
+		<logger level="INFO" doc:name="End Log" doc:id="01b97ad9-1a74-47d4-a5cb-5c86397ec2c3" message="Ended flow for create registration form" />
+    </flow>
+</mule>
